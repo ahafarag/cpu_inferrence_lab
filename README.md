@@ -86,6 +86,14 @@ python3 benchmarks/compare.py
 More: `benchmarks/setup/README.md` (stages, known traps), `MODELS.md` (every model URL and SHA256), `HARDWARE.md` (the machine),
 `PLAN.md` / `IDEAS.md` (the decisions and why).
 
+## License and disclaimer
+
+Code, scripts and documentation in this repository are released under the MIT License (see `LICENSE`), **provided "as is", without warranty of any kind**.
+
+- **Use at your own risk.** The benchmark scripts need root and change system settings (`read_ahead_kb`, `drop_caches`, cgroups), download multi-GB files and load the CPU and disk heavily. Do not run them on a machine that serves anything important. The author is not responsible for data loss, downtime, cost (for example cloud charges) or any other damage.
+- **Results are measurements, not guarantees.** They describe the specific hardware, kernel and software versions listed in `HARDWARE*.md`. Your results may differ. The settings suggested here are not recommendations for any particular system.
+- **Third-party software and models** (llama.cpp, bitnet.cpp, PowerInfer and the model files) are not included in this repository and keep their own licenses. Check each project's and model card's license before use; `MODELS.md` lists the sources.
+
 ## Repo map
 
 - `benchmarks/` scripts and `results.csv` (the only source of numbers), `routing/` (expert-routing logger and cache replay)
