@@ -228,7 +228,7 @@ Consequences for the write-up:
 
 What this establishes (and its limits):
 1. **The read-ahead effect replicates on a second quantisation of the model: 0.14 → 4.91 tok/s (~35x) at 76% cached.** Combined with Q8_0 (0.19 → 3.2–3.4 tok/s, ~17x at 68% cached) the effect is not specific to one file.
-2. **When the file fits in the cache, nothing matters**: 14.6–16.7 tok/s whatever the read-ahead or repack setting.
+2. **When the file fits in the cache, nothing clearly matters**: 14.6–16.7 tok/s across read-ahead and repack settings, with one unexplained outlier (10.36 tok/s, repack=1, read_ahead 128, sd 1.5).
 3. **`--repack` (default on) makes Q4 models un-streamable**: killed at a 3 GiB limit; with `--repack 0` the same model streams at 4.9 tok/s. For this MoE model repack gives no measurable speed gain (in-RAM 14.64 vs 14.98 ± ~1, prompt 25.8 vs 26.2); dense models are NOT tested.
 4. **Smaller quant at a smaller cache beats larger quant at a larger cache**: Q4_K_M at 3 GiB (4.9 tok/s) vs Q8_0 at 5 GiB (3.2–3.4).
 5. Limits: WSL2 only (native Linux untested), one model family (OLMoE), `llama-bench` generation from a near-empty context (routing is more repetitive than real chat; the routing replay says ~91% hit rate on real text), 16 tokens x 5 reps.
