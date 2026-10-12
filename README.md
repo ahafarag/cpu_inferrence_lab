@@ -29,7 +29,7 @@ Native Linux already defaults to 128 KB, so the penalty only bites when read-ahe
 
 At the Linux default a model that does not fit still runs at ~45-51% of its in-RAM speed; at 8 MB read-ahead it is ~30-100x slower.
 The 128 vs 256 KB difference is inside the run-to-run spread (3 reps, sd up to 4 tok/s). Hardware, disk speed and exact setup: `HARDWARE-ec2-m6id-xlarge.md`.
-Raw log: `benchmarks/logs/ec2_m6id_xlarge_sweep.log`.
+Raw log: `benchmarks/logs/ec2_m6id_xlarge_sweep.txt`.
 
 A second trap, found on the way: **llama.cpp's default weight repacking copies Q4 weights into private RAM** (3.1 GB for a 4.2 GB file), so a
 Q4 model cannot be streamed from disk and is OOM-killed under a memory limit. `--no-repack` (`llama-bench --repack 0`) fixes it; for this model it

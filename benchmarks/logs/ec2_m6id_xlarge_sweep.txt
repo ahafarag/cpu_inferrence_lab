@@ -1,0 +1,57 @@
+### env report
+# HARDWARE-ec2-m6id-xlarge.md
+
+Recorded 2026-10-12T17:34:27Z by benchmarks/setup/00_env_report.sh
+
+```
+kernel:       Linux 6.17.0-1017-aws x86_64
+virt:         amazon
+cpu:          Intel(R) Xeon(R) Platinum 8375C CPU @ 2.90GHz
+Intel(R) Xeon(R) Platinum 8375C CPU @ 2.90GHz  CPU @ 2.9GHz
+cores/thread: 2 physical / 4 logical
+flags:        avx2 avx512f fma 
+ram:          15703 MB total  swap: 0 MB
+root device:  /dev/root (   0        29G)
+free disk:    25G
+read_ahead_kb: unknown  (/sys/block/root/queue/read_ahead_kb)
+cgroup v2:    yes
+RAM bandwidth (membw.py, GB/s, read+write counted): 26.5 GB/s
+disk seq read (2 GB of olmoe-1b-7b-0924-instruct-q4_k_m.gguf): 430 MB/s
+disk random 128 KB: 146 MB/s
+```
+wrote /home/ubuntu/lab/HARDWARE-ec2-m6id-xlarge.md
+### Q4_K_M 3 GiB (76%) repack=0
+model=olmoe-1b-7b-0924-instruct-q4_k_m.gguf (4213 MB) cache=3GiB (76% of file) MemAvailable=14.8GiB read_ahead_kb original=128 host=ec2-m6id-xlarge
+== in RAM (no limit), file pre-read so the page cache is warm
+appended: llama.cpp Q4_K_M threads=2 pp=59.22 tg=22.93 peakRAM=GB
+== streamed: cgroup 3GiB swap=0, read_ahead_kb=8192
+appended: llama.cpp Q4_K_M threads=2 pp=3.46 tg=0.1 peakRAM=GB
+pgmajfault 24805
+== streamed: cgroup 3GiB swap=0, read_ahead_kb=1024
+appended: llama.cpp Q4_K_M threads=2 pp=4.13 tg=2.84 peakRAM=GB
+pgmajfault 12676
+== streamed: cgroup 3GiB swap=0, read_ahead_kb=256
+appended: llama.cpp Q4_K_M threads=2 pp=9.99 tg=9.9 peakRAM=GB
+pgmajfault 14926
+== streamed: cgroup 3GiB swap=0, read_ahead_kb=128
+appended: llama.cpp Q4_K_M threads=2 pp=19.78 tg=11.76 peakRAM=GB
+pgmajfault 14901
+restored read_ahead_kb=128 (via trap)
+### Q8_0 5 GiB (68%)
+model=olmoe-1b-7b-0924-instruct-q8_0.gguf (7359 MB) cache=5GiB (73% of file) MemAvailable=14.6GiB read_ahead_kb original=128 host=ec2-m6id-xlarge
+== in RAM (no limit), file pre-read so the page cache is warm
+appended: llama.cpp Q8_0 threads=2 pp=34.84 tg=14.68 peakRAM=GB
+== streamed: cgroup 5GiB swap=0, read_ahead_kb=8192
+appended: llama.cpp Q8_0 threads=2 pp=2.05 tg=0.22 peakRAM=GB
+pgmajfault 19636
+== streamed: cgroup 5GiB swap=0, read_ahead_kb=1024
+appended: llama.cpp Q8_0 threads=2 pp=2.87 tg=1.97 peakRAM=GB
+pgmajfault 19836
+== streamed: cgroup 5GiB swap=0, read_ahead_kb=256
+appended: llama.cpp Q8_0 threads=2 pp=6.92 tg=6.03 peakRAM=GB
+pgmajfault 22218
+== streamed: cgroup 5GiB swap=0, read_ahead_kb=128
+appended: llama.cpp Q8_0 threads=2 pp=8.03 tg=6.65 peakRAM=GB
+pgmajfault 28975
+restored read_ahead_kb=128 (via trap)
+### DONE

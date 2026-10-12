@@ -27,5 +27,5 @@ disk random 128 KB: 146 MB/s
 - **Disk speed measured on that NVMe** (the 430 / 146 MB/s above): sequential 430 MB/s, random 128 KB 146 MB/s. That is only ~1.5-2x the lab laptop's SATA SSD and well below a typical consumer NVMe, so absolute streamed speeds here are not what a fast laptop NVMe would give.
 - **Threads:** `run_llamacpp.sh` used 2 threads (physical cores).
 - **Virtualised:** EC2 Nitro, storage is network-less local NVMe but shared hardware; treat absolute numbers as "this instance".
-- **Run:** 2026-10-12, llama.cpp f2cc728, OLMoE-1B-7B-0924-Instruct Q4_K_M (`--repack 0`, 3 GiB cgroup = 76% of file) and Q8_0 (5 GiB cgroup = 68%), `read_ahead_kb` 8192/1024/256/128, 3 reps each, `pp32 tg16`. Raw log: `benchmarks/logs/ec2_m6id_xlarge_sweep.log`; rows in `benchmarks/results.csv` with `host=ec2-m6id-xlarge`.
+- **Run:** 2026-10-12, llama.cpp f2cc728, OLMoE-1B-7B-0924-Instruct Q4_K_M (`--repack 0`, 3 GiB cgroup = 76% of file) and Q8_0 (5 GiB cgroup = 68%), `read_ahead_kb` 8192/1024/256/128, 3 reps each, `pp32 tg16`. Raw log: `benchmarks/logs/ec2_m6id_xlarge_sweep.txt`; rows in `benchmarks/results.csv` with `host=ec2-m6id-xlarge`.
 - **Not repeated here:** the `--repack 1` OOM test (only `--repack 0` was run for Q4).
