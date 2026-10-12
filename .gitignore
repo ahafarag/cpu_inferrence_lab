@@ -1,0 +1,14 @@
+models/
+*.gguf
+*.bin
+*.safetensors
+engines/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.log
+benchmarks/raw/
+content/*.mp4
+.DS_Store
+Thumbs.db

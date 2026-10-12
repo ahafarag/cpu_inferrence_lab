@@ -1,0 +1,14 @@
+# 10 fixed prompts for the quality check. Score each answer 1–5. Do not edit after first use.
+# --- reasoning (5)
+1. A tank holds 1,200 litres. Pipe A fills it in 4 hours, pipe B empties it in 6 hours. Both open from empty: how long until full? Show steps.
+2. Three boxes are labelled Apples, Oranges, Mixed. Every label is wrong. You may pick one fruit from one box. Which box, and how do you relabel all three?
+3. A Postgres table has 50M rows and a query filtering on (customer_id, created_at) is slow. The only index is on created_at. What do you change and why, in order of expected impact?
+4. Explain why LLM decoding on a CPU is limited by memory bandwidth rather than FLOPs, with a numeric example for a 7B model.
+5. Two AWS accounts, same workload, one bill is 3x higher. List the first five things you check, most likely first.
+# --- code (3)
+6. Write a Python function that parses a CSV of (timestamp, bytes) and returns peak throughput in MB/s over any 60-second sliding window. Include a short test.
+7. Write a bash script that finds the 10 largest files under a directory, excluding .git, and prints size and path, sorted descending.
+8. Given this Terraform snippet with an S3 bucket, add server-side encryption, block public access, and a lifecycle rule moving objects to Glacier after 90 days. (Paste any minimal aws_s3_bucket resource.)
+# --- writing (2)
+9. Write a 120-word LinkedIn post announcing a benchmark of three CPU-only LLM engines. Direct tone, no hype, one concrete number placeholder.
+10. Rewrite this sentence to be clearer and shorter: "Due to the fact that the system was not able to be accessed by the users at the time in question, a decision was made to roll back."

@@ -1,0 +1,21 @@
+date,engine,engine_commit,model,params_B,quant,size_GB,threads,ctx,prompt_tps,gen_tps,peak_ram_GB,quality_1to5,notes
+2026-10-12,llama.cpp,f2cc728,Qwen2.5-7B-Instruct-Q4_K_M,7.62,Q4_K_M,4.68,4,2048,8.22,2.99,7.45,,
+2026-10-12,llama.cpp,f2cc728,Qwen2.5-7B-Instruct-Q8_0,7.62,Q8_0,8.1,4,2048,5.74,1.83,7.72,,
+2026-10-12,bitnet.cpp,0b341e5,BitNet-b1.58-2B-4T-i2_s,2.41,i2_s,1.19,4,2048,42.77,10.94,1.33,,
+2026-10-12,PowerInfer,8bd56d6,llama-7b-relu.q4.powerinfer,6.74,Q4_0,4.3,4,2048,4.22,3.05,5.11,,median of 3; sparse CPU-only; pp on 674-token prompt
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,21.15,10.36,7.14,,MoE OLMoE 64e top-8; in-RAM, WSL 14GB
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,4.46,0.07,,,MoE OLMoE 64e top-8; streamed, WSL 5GB limit, cold cache; pp128 tg32 1 rep; SWAP-CONFOUNDED (~0.8GB swapped), do not cite
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.05,0.07,,,MoE OLMoE 64e top-8; streamed, WSL 5GB limit, WARM cache; pp32 tg16 3 reps; SWAP-CONFOUNDED (765MB swapped), do not cite
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.11,0.19,,,MoE OLMoE 64e top-8; streamed via cgroup memory.max=5GB swap=0 (0 swapped; 19776 major faults); WSL 14GB; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.29,1.26,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=2048; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.09,0.18,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=8192; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,4.96,2.81,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=256; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,2.76,1.82,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=512; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.37,1.82,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=1024; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.32,1.32,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=2048; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.19,0.57,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=4096; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,6.55,1.8,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=32; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,4.91,2.12,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=64; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,8.59,2.32,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=128; pp32 tg16 3 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,4.56,3.21,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=256; pp32 tg16 5 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,4.42,3.44,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=128; pp32 tg16 5 reps; CLEAN
