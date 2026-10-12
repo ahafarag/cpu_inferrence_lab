@@ -46,6 +46,8 @@ llama-cli -m model.gguf --no-repack ...                                      # n
 
 Not measured: effect on other workloads, persistence across reboots, other model families, the `--repack 1` OOM case on native Linux, SATA/HDD on native Linux, GPU offload.
 
+Write-up: [On WSL2, a model bigger than your RAM runs ~35x slower than it should](https://abdufarag1.medium.com/on-wsl2-a-model-bigger-than-your-ram-runs-35x-slower-than-it-should-9243d1646599) (Medium).
+
 ## Four engines on the same laptop (CPU only, 4 threads)
 
 | Engine | Model | Size | Prompt tok/s | Generation tok/s | Peak RAM |
