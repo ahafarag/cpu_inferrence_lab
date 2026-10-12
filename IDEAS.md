@@ -162,6 +162,8 @@ Disk (inside WSL, cold): sequential 285 MB/s, random 128 KB reads 86 MB/s. Exper
 | 64 | 2.12 | 11x |
 | 32 | 1.80 | 10x |
 
+**5-rep confirmation (independent invocations, mean of 5 reps each):** 256 KB → 3.21 tok/s; 128 KB → 3.44 tok/s; 8192 KB (default) → 0.19 tok/s. Across all invocations the default is rock-stable (0.18, 0.19, 0.19), while 128–256 KB varies 2.3–3.4 tok/s between invocations (±~15%). Headline: **~12–18x over the WSL2 default**, best setting 128–256 KB, optimum not resolved within noise. No per-rep stddev is stored yet (only `avg_ts`).
+
 Smaller read-ahead wins until ~128–256 KB, then flattens. Native Linux's default (128 KB) already sits in the good region, so this is a **WSL2-specific** finding. Tangible-improvement threshold (>= 2x) met: 15x with no code. 5-rep confirmation of 256 / 128 / 8192 pending. Absolute speed is still ~3.7x below in-RAM; see `benchmarks/project_streaming.py` for the projection model and its limits.
 
 **Stop rule 1 (streamed within 1.5x of in-RAM): NOT met, so the idea continues.** The free OS cache does not rescue a model larger than RAM on this SATA SSD.

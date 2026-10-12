@@ -19,3 +19,4 @@ date,engine,engine_commit,model,params_B,quant,size_GB,threads,ctx,prompt_tps,ge
 2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,8.59,2.32,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=128; pp32 tg16 3 reps; CLEAN
 2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,4.56,3.21,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=256; pp32 tg16 5 reps; CLEAN
 2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,4.42,3.44,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=128; pp32 tg16 5 reps; CLEAN
+2026-10-12,llama.cpp,f2cc728,olmoe-1b-7b-0924-instruct-q8_0,6.92,Q8_0,7.36,4,2048,1.13,0.19,,,MoE OLMoE; cgroup 5GB swap=0, WSL 14GB; read_ahead_kb=8192; pp32 tg16 5 reps; CLEAN
