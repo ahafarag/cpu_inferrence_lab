@@ -16,7 +16,7 @@ for key in "$@"; do
     continue
   fi
   need_gb=$(( (size + 1073741823) / 1073741824 ))
-  free_gb=$(df -P --output=avail -BG "$(dirname "$out")" | tail -1 | tr -dc '0-9')
+  free_gb=$(df --output=avail -BG "$(dirname "$out")" | tail -1 | tr -dc '0-9')
   [ "$free_gb" -ge $((need_gb + 2)) ] || die "need ~${need_gb} GB free in $(dirname "$out"), have ${free_gb} GB"
   echo "downloading $key ($(( size / 1000000 )) MB) from $repo @ ${rev:0:8}"
   curl -fL -C - --retry 5 --retry-delay 5 -o "$out" "https://huggingface.co/$repo/resolve/$rev/$file"

@@ -25,13 +25,14 @@ CTX=2048
 
 # llama-bench CSV: pick avg_ts by column name for the pp512 and tg128 rows.
 # Overridable for slow cases (e.g. SSD-streamed MoE): BENCH_P / BENCH_N / BENCH_R, SKIP_PEAK=1.
-RAW=$("$BENCH" -m "$MODEL" -t "$THREADS" -p "${BENCH_P:-512}" -n "${BENCH_N:-128}" -r "${BENCH_R:-3}" -o csv 2>/dev/null)
-read -r PP TG PARAMS < <(printf '%s\n' "$RAW" | python3 -c '
+RAW=$("$BENCH" -m "$MODEL" -t "$THREADS" -p "${BENCH_P:-512}" -n "${BENCH_N:-128}" -r "${BENCH_R:-3}" ${BENCH_ARGS:-} -o csv 2>/dev/null)
+read -r PP TG PARAMS PPSD TGSD < <(printf '%s\n' "$RAW" | python3 -c '
 import csv, sys
 rows = list(csv.DictReader(sys.stdin))
 pp = next(r for r in rows if r["n_prompt"] != "0" and r["n_gen"] == "0")
 tg = next(r for r in rows if r["n_prompt"] == "0" and r["n_gen"] != "0")
-print(round(float(pp["avg_ts"]), 2), round(float(tg["avg_ts"]), 2), round(int(pp["model_n_params"]) / 1e9, 2))
+print(round(float(pp["avg_ts"]), 2), round(float(tg["avg_ts"]), 2), round(int(pp["model_n_params"]) / 1e9, 2),
+      round(float(pp["stddev_ts"]), 2), round(float(tg["stddev_ts"]), 2))
 ')
 
 # Peak RSS of a short generation (stdin closed, no conversation mode).
@@ -52,5 +53,5 @@ fi
 
 NAME=$(basename "$MODEL" .gguf)
 case "$NAME" in ggml-model-*) NAME="$(basename "$(dirname "$MODEL")")-${NAME#ggml-model-}" ;; esac  # e.g. BitNet-b1.58-2B-4T-i2_s
-echo "$(date +%F),$ENGINE,$COMMIT,$NAME,$PARAMS,$QUANT,$SIZE_GB,$THREADS,$CTX,$PP,$TG,$PEAK,,${NOTES:-}" >> "$OUT"
+echo "$(date +%F),$ENGINE,$COMMIT,$NAME,$PARAMS,$QUANT,$SIZE_GB,$THREADS,$CTX,$PP,$TG,$PEAK,,${NOTES:-}${NOTES:+; }sd(pp)=$PPSD sd(tg)=$TGSD n=${BENCH_R:-3}" >> "$OUT"
 echo "appended: $ENGINE $QUANT threads=$THREADS pp=$PP tg=$TG peakRAM=${PEAK}GB"

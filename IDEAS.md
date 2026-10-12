@@ -192,6 +192,48 @@ Open and NOT yet measured (this is what step 3 decides):
 - Time per token is ~5.3 s against ~0.1 s of compute, so the run is >98% I/O-bound: prefetch *overlap* can save at most ~2%. Only a better *miss rate* (what is cached) or a better *I/O pattern* (large reads instead of page faults) can help.
 - The disk bound: at 285 MB/s, even a zero-overhead scheme with ~40% misses of ~1.4 GB/token tops out near 0.5 tok/s, still ~20x below RAM. Usable "big MoE on a small laptop" is therefore NOT on the table on this SATA disk; the realistic deliverable is the characterisation plus an I/O-pattern fix.
 
+### Finding after Gate 1: llama.cpp weight repacking defeats mmap streaming for Q4 models (2026-10-12)
+
+Found while testing OLMoE Q4_K_M under a 3 GiB cgroup: `llama-bench` was **OOM-killed holding 3.1 GB of anonymous memory** (`memory.events: oom_kill 1`).
+Measured peak memory per model and `--repack` setting (`llama-bench -p 32 -n 16 -r 2`, no cgroup; speeds in that run are cache-order noise and not used):
+
+| Model | `--repack` | RssAnon (not evictable) | RssFile (evictable page cache) |
+|---|---|---|---|
+| OLMoE Q4_K_M (4.2 GB) | 1 (default) | **3,063 MB** | 4,028 MB |
+| OLMoE Q4_K_M | 0 | 57 MB | 4,027 MB |
+| OLMoE Q8_0 (7.4 GB) | 1 or 0 | 55 MB | ~7,020 MB |
+
+Interpretation: with the default `--repack 1`, llama.cpp's CPU backend re-lays out Q4_K weights at load into **private (anonymous) RAM**. That memory
+cannot be evicted or streamed from disk, so a Q4_0/Q4_K model with repack on needs its weights resident (+ the mmapped file cache on top), and a cache
+limit below ~3.2 GB kills the process instead of streaming. **Q8_0 is not repacked on this x86 AVX2 CPU**, so all Q8 streaming results are unaffected.
+This also explains the 7.45 GB peak RSS of the 4.7 GB Qwen Q4_K_M run (verified, previously only suspected).
+
+Consequences for the write-up:
+1. "Use a lower-bit quant that fits" holds, but a Q4 model that *doesn't* fit must be run with `--no-repack` (llama.cpp `-nr`, bench `--repack 0`) to stream at all, at a compute cost.
+2. The dense-baseline numbers for Q4_K_M (2.99 tok/s) are llama.cpp **default** behaviour and stay valid as such.
+3. Rows 'OLMoE Q4_K_M in-RAM / streamed (first attempt)' in `results.csv` are marked contaminated (cold cache, repack=1) and must not be cited; the corrected matrix replaces them.
+4. A second measurement flaw fixed: the "in-RAM" reference must be warmed with a full file read first (`cat file > /dev/null`), not just a cache drop.
+
+**Corrected Q4_K_M matrix (repack really off, warm references, 5 reps, spread = sd across reps; OLMoE-1B-7B Q4_K_M 4.2 GB, WSL2):**
+
+| Cache (cgroup, swap off) | `--repack` | read_ahead_kb | gen tok/s | sd |
+|---|---|---|---|---|
+| none (in RAM, warm) | 0 | 8192 | 14.98 | 1.17 |
+| 5 GiB (file fits, 127%) | 0 | 8192 | 14.56 | 0.77 |
+| 5 GiB | 0 | 128 | 16.73 | 1.65 |
+| **3 GiB (76% of file)** | 0 | **8192 (WSL2 default)** | **0.14** | 0.04 |
+| **3 GiB (76% of file)** | 0 | **128** | **4.91** | 1.23 |
+| 3 GiB | **1 (default)** | 128 | **OOM-killed** (exit 137, `oom_kill=1`) | – |
+| in RAM / 5 GiB (file fits) | 1 | 8192 / 128 | 14.64 / 14.83 / 10.36 | 0.5 / 0.5 / 1.5 |
+
+What this establishes (and its limits):
+1. **The read-ahead effect replicates on a second quantisation of the model: 0.14 → 4.91 tok/s (~35x) at 76% cached.** Combined with Q8_0 (0.19 → 3.2–3.4 tok/s, ~17x at 68% cached) the effect is not specific to one file.
+2. **When the file fits in the cache, nothing matters**: 14.6–16.7 tok/s whatever the read-ahead or repack setting.
+3. **`--repack` (default on) makes Q4 models un-streamable**: killed at a 3 GiB limit; with `--repack 0` the same model streams at 4.9 tok/s. For this MoE model repack gives no measurable speed gain (in-RAM 14.64 vs 14.98 ± ~1, prompt 25.8 vs 26.2); dense models are NOT tested.
+4. **Smaller quant at a smaller cache beats larger quant at a larger cache**: Q4_K_M at 3 GiB (4.9 tok/s) vs Q8_0 at 5 GiB (3.2–3.4).
+5. Limits: WSL2 only (native Linux untested), one model family (OLMoE), `llama-bench` generation from a near-empty context (routing is more repetitive than real chat; the routing replay says ~91% hit rate on real text), 16 tokens x 5 reps.
+6. Process notes kept for honesty: the first Q4 rows were cold-cache contaminated; a script bug ignored `--repack 0` in one run (relabelled as repack=1 replicates); both are flagged in `results.csv`.
+
 ### Gate 1 decision (2026-10-12, Opus)
 
 **Correction to the step-3 note above.** The benchmark measurement is NOT "too optimistic": with 90.8% LRU hits at the lab cache, ~79 MB/token comes from disk; measured 2.8–3.4 tok/s implies 0.19–0.26 s disk wait per token = ~300–400 MB/s effective, at or above the 285 MB/s measured sequential rate. So (a) the benchmark is consistent with a ~91–93% hit rate on real text, and (b) **with read-ahead at 128–256 KB the disk already runs at its sequential ceiling.** On this machine only two levers remain: fewer misses, or overlapping disk I/O with compute.
