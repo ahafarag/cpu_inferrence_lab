@@ -185,10 +185,34 @@ Findings:
 
 **Stop rule 1 (streamed within 1.5x of in-RAM): NOT met, so the idea continues.** The free OS cache does not rescue a model larger than RAM on this SATA SSD.
 
+*[SUPERSEDED by the read-ahead sweep, routing replay and Gate 1 below — kept for the record. The 40%-miss / 0.5 tok/s bound here was wrong: real-text misses are ~9% and the tuned lab run reaches 3.4 tok/s.]*
+
 Open and NOT yet measured (this is what step 3 decides):
 - Cache hit rate of the kernel's LRU vs an oracle for the real routing trace (stop rule 2).
 - Time per token is ~5.3 s against ~0.1 s of compute, so the run is >98% I/O-bound: prefetch *overlap* can save at most ~2%. Only a better *miss rate* (what is cached) or a better *I/O pattern* (large reads instead of page faults) can help.
 - The disk bound: at 285 MB/s, even a zero-overhead scheme with ~40% misses of ~1.4 GB/token tops out near 0.5 tok/s, still ~20x below RAM. Usable "big MoE on a small laptop" is therefore NOT on the table on this SATA disk; the realistic deliverable is the characterisation plus an I/O-pattern fix.
+
+### Gate 1 decision (2026-10-12, Opus)
+
+**Correction to the step-3 note above.** The benchmark measurement is NOT "too optimistic": with 90.8% LRU hits at the lab cache, ~79 MB/token comes from disk; measured 2.8–3.4 tok/s implies 0.19–0.26 s disk wait per token = ~300–400 MB/s effective, at or above the 285 MB/s measured sequential rate. So (a) the benchmark is consistent with a ~91–93% hit rate on real text, and (b) **with read-ahead at 128–256 KB the disk already runs at its sequential ceiling.** On this machine only two levers remain: fewer misses, or overlapping disk I/O with compute.
+
+**Why the predictor is NOT built now:**
+1. *Fewer misses* needs eviction informed by future use. Belady shows the ceiling (~3x fewer misses), but a next-layer predictor gives little eviction information; reaching a meaningful fraction of Belady is a research project in a crowded field (ProMoE, MoBiLE, DALI, Fiddler, MoE-Infinity). Feasibility A5 stays 1/3.
+2. *Overlap* can hide at most the compute time. On the lab laptop compute is ~0.1 s against ~0.2–0.26 s of I/O, so overlap is worth ≤ ~1.4x here.
+3. Overlap matters most where disk time ≈ compute time (fast NVMe). The lab cannot measure that; the owner's VPS might.
+4. Owner's rule: continue only with tangible improvement. The predictor has none measured, and its realistic ceiling on this hardware is below the 2x bar used for read-ahead.
+
+**Verdict: Idea 1 as "build a predictor-driven prefetcher" = STOP (parked, not rejected).** The kill-test did its job: it replaced the hypothesis with measured facts and produced one real, cheap, user-facing win.
+
+**Re-entry criterion (fixed now):** reopen only if Phase 1b (or any NVMe machine) shows the in-RAM compute share of streamed time per token ≥ 40% (I/O ≈ compute), so overlap alone could give ≥ 1.5x. First test then: naive prefetch (`madvise(WILLNEED)` of the current token's experts for the next token, no learned predictor) vs the read-ahead-tuned baseline.
+
+**What gets published (deliverable of Phases 0–1):**
+1. Four-engine CPU baseline on a 2018 laptop: every engine at 85–100% of `RAM bandwidth / bytes per token`; CPU activation sparsity gave no gain.
+2. WSL2 finding: streamed MoE 0.19 → 3.2–3.4 tok/s (12–18x) via `read_ahead_kb` 8192 → 128–256 KB. Scoped to WSL2 until Phase 1b.
+3. MoE streaming on real text: LRU hit 80 → 98% as expert cache grows 3.2 → 5.6 GB; recency beats frequency; Belady bound ~3x fewer misses. Practical advice: cache capacity (lower-bit experts; OLMoE Q4 at 4.2 GB fits a 5 GB budget entirely) beats cache cleverness.
+4. Projection model (`project_streaming.py`), quoted at its 90–95% hit-rate rows with its limits. Its lab row in section B assumes 0.15 GB/s; the tuned lab actually achieves ~0.3–0.4 GB/s effective.
+
+**Next:** Phase 1b (VPS), which now also carries the re-entry measurement. Candidate for later (needs a scorecard first): a small "local LLM fit-and-tune" check script reporting RAM bandwidth, disk speed, `read_ahead_kb`, and which model/quant fits vs must stream.
 
 ### Gate 0 decision
 
