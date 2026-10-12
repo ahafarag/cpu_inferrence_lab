@@ -88,6 +88,18 @@ Why: the headline finding so far (WSL2's 8 MB `read_ahead_kb` makes a streamed M
 
 **Stop rule:** if the VPS has < 20 GB free disk or < 8 GB RAM (cannot hold a meaningful in-RAM vs streamed comparison for OLMoE Q8_0 at 7.4 GB), run only steps 1 and 4 and record why.
 
+**Amendment 2026-10-12 (owner's Hostinger VPS: 3.9 GB RAM, ~1.8 GB available, no swap, 21 GB free disk, Docker present):** the stop rule would
+allow only steps 1 and 4. Because the VPS is *naturally* in the "model bigger than RAM" regime, the read-ahead sweep is still the most
+informative test, so the plan is changed to: env record + BitNet 2B baseline + streamed-only OLMoE Q4_K_M (4.2 GB) with a 2 GiB cache
+(48% of file; lab used 68%) over `read_ahead_kb` 128/256/1024/8192, no in-RAM ratio, report absolute tok/s and the ratio between
+settings, then run `project_streaming.py` with the measured disk speeds. `JOBS=2` for compiles (no swap). Qwen 7B baseline skipped
+(would stream and be mislabelled). Runbook: `benchmarks/setup/VPS.md`. Repo reaches the VPS as a `git archive` tarball via `scp`
+(no GitHub needed).
+
+**Status 2026-10-12:** prerequisites done — portable pinned setup scripts, `models.tsv` + `MODELS.md` (SHA256), `run_all.sh`,
+`Dockerfile` (UNTESTED, daemon was down), `VPS.md`. Fresh pinned llama.cpp build verified from an empty directory (7m47s). Not yet
+exercised end to end: BitNet/PowerInfer setup scripts, `50_moe_streamed.sh`, `run_all.sh`. Waiting on the owner to deliver the repo to the VPS.
+
 **Needs from the owner:** SSH access for me is NOT requested; run the scripts yourself and paste or commit the `results.csv` rows and `HARDWARE-vps.md`. Tell me the VPS RAM/disk first so I can size the test.
 
 ---

@@ -1,0 +1,7 @@
+key	repo	file	revision	size_bytes	sha256	dest
+qwen25-7b-q4km	bartowski/Qwen2.5-7B-Instruct-GGUF	Qwen2.5-7B-Instruct-Q4_K_M.gguf	8911e8a47f92bac19d6f5c64a2e2095bd2f7d031	4683074240	65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423	Qwen2.5-7B-Instruct-Q4_K_M.gguf
+qwen25-7b-q8	bartowski/Qwen2.5-7B-Instruct-GGUF	Qwen2.5-7B-Instruct-Q8_0.gguf	8911e8a47f92bac19d6f5c64a2e2095bd2f7d031	8098525888	9c6a6e61664446321d9c0dd7ee28a0d03914277609e21bc0e1fce4abe780ce1b	Qwen2.5-7B-Instruct-Q8_0.gguf
+olmoe-q8	allenai/OLMoE-1B-7B-0924-Instruct-GGUF	olmoe-1b-7b-0924-instruct-q8_0.gguf	02ab6ea6894a8418eb14f6d8ee1bfb08bd298080	7359943136	d089e8b12dee00764c1783f6c557a2ddd1f680ffb0d22b44ad28ef25f8909c66	moe/olmoe-1b-7b-0924-instruct-q8_0.gguf
+olmoe-q4km	allenai/OLMoE-1B-7B-0924-Instruct-GGUF	olmoe-1b-7b-0924-instruct-q4_k_m.gguf	02ab6ea6894a8418eb14f6d8ee1bfb08bd298080	4213512672	8c310f1435a1222338fd2d3d974975be9cd908180b644bab0c2a94da1ac32f3f	moe/olmoe-1b-7b-0924-instruct-q4_k_m.gguf
+bitnet-2b-i2s	microsoft/BitNet-b1.58-2B-4T-gguf	ggml-model-i2_s.gguf	a1f2f1c765812aa8af3f6eda4a313707064bba15	1187801280	4221b252fdd5fd25e15847adfeb5ee88886506ba50b8a34548374492884c2162	BitNet-b1.58-2B-4T/ggml-model-i2_s.gguf
+relullama-7b-f16	PowerInfer/ReluLLaMA-7B-PowerInfer-GGUF	llama-7b-relu.powerinfer.gguf	17b5d8a28f0377e05758a74989ce9326f5905860	15148489984	ed59b0524bc7febf5a6288d8c52fb249a7bed2b23089286af2e97a5d18169086	powerinfer/llama-7b-relu.powerinfer.gguf

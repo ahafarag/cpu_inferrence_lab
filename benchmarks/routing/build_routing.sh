@@ -3,7 +3,7 @@
 set -euo pipefail
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin   # avoid the WSL Windows-PATH trap
 HERE="$(cd "$(dirname "$0")" && pwd)"
-LLAMA_DIR="${LLAMA_DIR:-$HOME/engines/llama.cpp}"
+LLAMA_DIR="${LLAMA_DIR:-${ENGINES_DIR:-$HOME/engines}/llama.cpp}"
 EX="$LLAMA_DIR/examples/moe-routing"
 mkdir -p "$EX"
 cp "$HERE/moe_routing.cpp" "$EX/moe-routing.cpp"

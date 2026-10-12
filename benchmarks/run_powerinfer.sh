@@ -9,7 +9,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 MODEL="${1:?model path}"
 THREADS="${2:-$(lscpu -p=CORE,SOCKET | grep -v '^#' | sort -u | wc -l)}"
 QUANT="${3:-$(basename "$MODEL" | grep -oE 'q[0-9]_?[0-9a-z]*' | head -1 | tr a-z A-Z || echo unknown)}"
-PI_DIR="${PI_DIR:-$HOME/engines/PowerInfer}"
+PI_DIR="${PI_DIR:-${ENGINES_DIR:-$HOME/engines}/PowerInfer}"
 OUT="$(cd "$(dirname "$0")" && pwd)/results.csv"
 MAIN="$PI_DIR/build/bin/main"
 [ -x "$MAIN" ] || { echo "main not found at $MAIN"; exit 1; }

@@ -10,7 +10,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 MODEL="${1:?model path}"
 THREADS="${2:-$(lscpu -p=CORE,SOCKET | grep -v '^#' | sort -u | wc -l)}"
 QUANT="${3:-$(basename "$MODEL" | grep -ioE 'q[0-9]_[a-z0-9_]+|q[0-9]_[0-9]|f16|bf16' | head -1 | tr a-z A-Z || echo unknown)}"
-LLAMA_DIR="${LLAMA_DIR:-$HOME/engines/llama.cpp}"
+LLAMA_DIR="${LLAMA_DIR:-${ENGINES_DIR:-$HOME/engines}/llama.cpp}"
 ENGINE="${ENGINE:-llama.cpp}"            # row label (bitnet.cpp reuses this script via run_bitnet.sh)
 CLI_ARGS="${CLI_ARGS:--st --simple-io}"  # scripted-run flags for llama-cli
 BENCH="$LLAMA_DIR/build/bin/llama-bench"

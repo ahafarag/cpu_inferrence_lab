@@ -4,7 +4,7 @@
 # Default model: official BitNet-b1.58-2B-4T (i2_s).
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-MODEL="${1:-$HOME/models/BitNet-b1.58-2B-4T/ggml-model-i2_s.gguf}"
+MODEL="${1:-${MODELS_DIR:-$HOME/models}/BitNet-b1.58-2B-4T/ggml-model-i2_s.gguf}"
 export ENGINE=bitnet.cpp
-export LLAMA_DIR="${BITNET_DIR:-$HOME/engines/BitNet}"
+export LLAMA_DIR="${BITNET_DIR:-${ENGINES_DIR:-$HOME/engines}/BitNet}"
 exec "$HERE/run_llamacpp.sh" "$MODEL" "${2:-}" i2_s

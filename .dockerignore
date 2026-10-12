@@ -1,0 +1,7 @@
+.git
+models/
+engines/
+*.gguf
+*.log
+__pycache__/
+HARDWARE-*.md
