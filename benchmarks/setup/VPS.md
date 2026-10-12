@@ -1,6 +1,6 @@
 # Running the lab on a VPS (Phase 1b) — step by step
 
-Written for the owner's Hostinger VPS (`[VPS_HOSTNAME]`, seen 2026-10-12: Linux, 3.9 GB RAM with ~1.8 GB available, no swap,
+Written for the owner's Hostinger VPS (seen 2026-10-12: Linux, 3.9 GB RAM with ~1.8 GB available, no swap,
 48 GB disk / 21 GB free, Docker present). Adjust numbers if yours differ.
 
 ## 0. Read first: protect the VPS

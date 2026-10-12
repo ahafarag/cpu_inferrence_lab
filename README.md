@@ -74,7 +74,7 @@ One laptop (WSL2) plus one EC2 instance (native Linux; its NVMe measured only 43
 ## Reproduce
 
 ```bash
-git clone <this repo> && cd cpu-inference-lab
+git clone https://github.com/ahafarag/cpu_inferrence_lab.git cpu-inference-lab && cd cpu-inference-lab
 sudo apt install build-essential cmake clang lld git curl python3 python3-venv util-linux
 bash benchmarks/setup/run_all.sh --stages "env llamacpp moe"     # pinned engine commits, SHA256-verified models
 sudo bash benchmarks/setup/50_moe_streamed.sh --model ~/models/moe/olmoe-1b-7b-0924-instruct-q4_k_m.gguf --cache-gb 3 --repack 0 --readahead "8192 128"

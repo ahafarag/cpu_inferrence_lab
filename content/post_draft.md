@@ -28,7 +28,7 @@ Second trap: llama.cpp's default `--repack` copies Q4 weights into private RAM (
 
 Also measured: llama.cpp, bitnet.cpp and PowerInfer all land at 85-100% of RAM bandwidth / bytes per token on this machine. PowerInfer's sparsity gave no gain here.
 
-Scope: one laptop (WSL2) + one EC2 instance (native Linux), one MoE family, 3-5 reps. If it fits in RAM the setting changes nothing. Scripts, pinned commits, SHA256-verified models, all raw rows (including my wrong early runs, flagged): <repo link>
+Scope: one laptop (WSL2) + one EC2 instance (native Linux), one MoE family, 3-5 reps. If it fits in RAM the setting changes nothing. Scripts, pinned commits, SHA256-verified models, all raw rows (including my wrong early runs, flagged): https://github.com/ahafarag/cpu_inferrence_lab
 
 Question for llama.cpp people: would `madvise(MADV_RANDOM)` on expert tensors be the right fix at the source instead of a system setting?
 
@@ -38,7 +38,7 @@ I tried to make LLMs run faster on a 2018 laptop. Most ideas did nothing (activa
 
 On WSL2, the default disk read-ahead is 8 MB. When a model is bigger than RAM, that makes it 17-35x slower. Setting it to 128 KB: 0.14 -> 4.9 tok/s, no code change.
 
-Chart (WSL2 laptop vs native Linux EC2), numbers and scripts to reproduce: <repo link>
+Chart (WSL2 laptop vs native Linux EC2), numbers and scripts to reproduce: https://github.com/ahafarag/cpu_inferrence_lab
 
 ---
 **Stop rule:** no meaningful engagement within a week -> close the project (PLAN.md).

@@ -32,7 +32,7 @@ So the penalty is a function of the read-ahead value, not WSL2-specific; WSL2 ju
 1. Is a per-tensor `madvise(MADV_RANDOM)` / `posix_fadvise` on expert tensors a reasonable direction, so users do not need a system-wide setting? (Not tested by me.)
 2. Should the docs mention that repack must be disabled to stream Q4 types larger than RAM?
 
-**Reproduce:** <repo link>: `benchmarks/setup/50_moe_streamed.sh`, raw rows in `benchmarks/results.csv`.
+**Reproduce:** https://github.com/ahafarag/cpu_inferrence_lab: `benchmarks/setup/50_moe_streamed.sh`, raw rows in `benchmarks/results.csv`.
 
 ---
 Ready to post. Edit the repo link first.
