@@ -19,7 +19,9 @@ LABEL="${HOST_LABEL:-$(hostname -s)}"
 SIZE_B=$(stat -c %s "$MODEL")
 # default cache = 68% of the file (the fraction used on the lab laptop), rounded to whole GiB
 [ -n "$CACHE_GB" ] || CACHE_GB=$(python3 -c "import math;print(max(1, round($SIZE_B*0.68/2**30)))")
-ROOT_SRC="$(df --output=source / | tail -1)"; DEV="$(basename "$ROOT_SRC")"; DEV="${DEV%%[0-9]*}"
+# tune read-ahead on the block device that actually holds the model file (not necessarily /)
+ROOT_SRC="$(df --output=source "$MODEL" | tail -1)"; DEV="$(basename "$ROOT_SRC")"
+case "$DEV" in nvme*n[0-9]*p[0-9]*) DEV="${DEV%p[0-9]*}";; nvme*) ;; *) DEV="${DEV%%[0-9]*}";; esac
 RA="/sys/block/$DEV/queue/read_ahead_kb"; ORIG_RA="$(cat "$RA")"
 trap 'echo "$ORIG_RA" > "$RA"; rmdir /sys/fs/cgroup/moe_limit 2>/dev/null || true' EXIT
 MEM_AVAIL_GB=$(awk '/MemAvailable/{printf "%.1f", $2/1048576}' /proc/meminfo)

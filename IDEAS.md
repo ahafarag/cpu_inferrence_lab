@@ -271,3 +271,10 @@ What this establishes (and its limits):
 | Idea 3 — ReLUfication pipeline | 2026-10-12 (Gate 0) | Needs GPU fine-tuning (red flag), and measured CPU sparse inference gave no speedup on this machine. |
 | Idea 4 — KV cache on SSD | 2026-10-12 (Gate 0) | GQA keeps KV small at 7B; SSD-KV is I/O-bound even in vLLM; SATA disk; low benefit. |
 | Idea 2 as a project | 2026-10-12 (Gate 0) | Sparsity leg measured dead on this CPU; the rest already exists in llama.cpp. Optional single benchmark row only. |
+
+## Decision 2026-10-12 — native-Linux confirmation (Phase 1b)
+
+- **Question:** is the read-ahead penalty WSL2-specific? **Answer: no, the mechanism is general.** On native Linux (EC2 m6id.xlarge, kernel 6.17, NVMe instance store, 16 GiB) OLMoE Q4_K_M at a 3 GiB cache: 0.10 tok/s at read_ahead 8192 KB vs 11.8 at 128 KB (22.9 in RAM); Q8_0 at 5 GiB: 0.22 vs 6.7 (14.7 in RAM).
+- **What it changes for users:** WSL2 users hit it by default (8192 KB); native-Linux users only if their read-ahead is large. At the Linux default, streaming a larger-than-RAM MoE keeps ~45-51% of in-RAM speed on this NVMe.
+- **Not changed:** predictor/prefetch stays parked (re-entry rule above); no new idea started. Not measured: repack OOM case on native Linux, SATA/HDD on native Linux, GPU.
+- **Next:** publish (owner), one-week stop rule.

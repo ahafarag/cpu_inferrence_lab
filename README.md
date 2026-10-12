@@ -2,20 +2,34 @@
 
 Measuring what an LLM really needs to run on an ordinary, old laptop, and what actually helps.
 
-One 2018 laptop (i7-8550U, 20 GB RAM, **SATA SSD**, WSL2), four inference engines, one MoE model, every number reproducible from a script.
+One 2018 laptop (i7-8550U, 20 GB RAM, **SATA SSD**, WSL2) and one native-Linux EC2 instance (m6id.xlarge, 16 GiB, NVMe), four inference engines, one MoE model, every number reproducible from a script.
 
 ## TL;DR
 
 **If you run a model that is bigger than your free RAM on WSL2, the default disk read-ahead (8 MB) makes it 17–35x slower than it needs to be.**
 Setting `read_ahead_kb` to 128–256 KB took an MoE model streamed from SSD from **0.14–0.19 tok/s to 3–5 tok/s**, with no code change.
 
-![generation speed vs read_ahead_kb](content/readahead.png)
+**Replicated on native Linux** (EC2 m6id.xlarge, kernel 6.17, ext4 on local NVMe, 3 reps per point): the same sweep gives the same shape.
+Native Linux already defaults to 128 KB, so the penalty only bites when read-ahead is large (WSL2 ships 8192 KB; some RAID/LVM/tuned servers do too).
+
+![generation speed vs read_ahead_kb: WSL2 laptop and native Linux EC2](content/readahead.png)
 
 | Model (OLMoE-1B-7B) | Cache | read_ahead 8192 KB (WSL2 default) | read_ahead 128–256 KB |
 |---|---|---|---|
 | Q8_0 (7.4 GB) | 5 GB (68% of file) | 0.18–0.19 tok/s | 2.3–3.4 tok/s |
 | Q4_K_M (4.2 GB), `--repack 0` | 3 GiB (76% of file) | 0.14 tok/s | 4.9 tok/s |
 | fits in cache | any | 14.6–15.0 tok/s | 14.6–16.7 tok/s (no effect; one outlier at 10.4 with repack on, unexplained) |
+
+**Native Linux, EC2 m6id.xlarge** (4 vCPU, 16 GiB, NVMe instance store; model streamed through a cgroup-limited cache, `--repack 0` for Q4):
+
+| Model (OLMoE-1B-7B) | Cache | fully in RAM | read_ahead 8192 KB | 1024 KB | 256 KB | 128 KB (Linux default) |
+|---|---|---|---|---|---|---|
+| Q4_K_M (4.2 GB) | 3 GiB (76%) | 22.9 tok/s | 0.10 | 2.84 | 9.9 | **11.8** |
+| Q8_0 (7.4 GB) | 5 GiB (68%) | 14.7 tok/s | 0.22 | 1.97 | 6.0 | **6.7** |
+
+At the Linux default a model that does not fit still runs at ~45-51% of its in-RAM speed; at 8 MB read-ahead it is ~30-100x slower.
+The 128 vs 256 KB difference is inside the run-to-run spread (3 reps, sd up to 4 tok/s). Hardware, disk speed and exact setup: `HARDWARE-ec2-m6id-xlarge.md`.
+Raw log: `benchmarks/logs/ec2_m6id_xlarge_sweep.log`.
 
 A second trap, found on the way: **llama.cpp's default weight repacking copies Q4 weights into private RAM** (3.1 GB for a 4.2 GB file), so a
 Q4 model cannot be streamed from disk and is OOM-killed under a memory limit. `--no-repack` (`llama-bench --repack 0`) fixes it; for this model it
@@ -30,7 +44,7 @@ echo 128 | sudo tee /sys/block/$dev/queue/read_ahead_kb                      # r
 llama-cli -m model.gguf --no-repack ...                                      # needed for Q4 types to stream
 ```
 
-Not measured: effect on other workloads, persistence across reboots, native Linux (its default is already 128 KB), other model families.
+Not measured: effect on other workloads, persistence across reboots, other model families, the `--repack 1` OOM case on native Linux, SATA/HDD on native Linux, GPU offload.
 
 ## Four engines on the same laptop (CPU only, 4 threads)
 
@@ -53,9 +67,9 @@ Not measured: effect on other workloads, persistence across reboots, native Linu
 
 ## Limits of these results
 
-One laptop, WSL2, one MoE family, `llama-bench` generation from a near-empty context (real chat routes less repetitively; replayed real text gives a ~91% expert-cache hit rate at the 5 GB cache, so real speeds are somewhat lower), 16 tokens x 3-5 reps with the spread stored in `results.csv`. The raw disk speed on this laptop varied by up to 40% between runs. Projections for faster machines (`benchmarks/project_streaming.py`) are a model, not measurements.
+One laptop (WSL2) plus one EC2 instance (native Linux; its NVMe measured only 430 MB/s sequential, far below a fast consumer NVMe), one MoE family, `llama-bench` generation from a near-empty context (real chat routes less repetitively; replayed real text gives a ~91% expert-cache hit rate at the 5 GB cache, so real speeds are somewhat lower), 16 tokens x 3-5 reps with the spread stored in `results.csv`. The raw disk speed on this laptop varied by up to 40% between runs. Projections for faster machines (`benchmarks/project_streaming.py`) are a model, not measurements.
 
-**Status:** native-Linux confirmation pending (VPS run prepared in `benchmarks/setup/VPS.md`). Docker image written but untested.
+**Status:** read-ahead result confirmed on WSL2 (lab laptop) and native Linux (EC2 m6id.xlarge, 2026-10-12). Docker image written but untested. Hostinger VPS was not used (it is a production box with 1 vCPU).
 
 ## Reproduce
 
