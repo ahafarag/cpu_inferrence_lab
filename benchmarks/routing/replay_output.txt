@@ -1,0 +1,23 @@
+﻿01_code          tokens= 239 accesses=28680 distinct slices=899/1024
+02_science       tokens= 162 accesses=19440 distinct slices=914/1024
+03_narrative     tokens= 201 accesses=24120 distinct slices=921/1024
+04_data          tokens= 166 accesses=19920 distinct slices=893/1024
+05_spanish       tokens= 226 accesses=27120 distinct slices=944/1024
+session (all prompts concatenated): tokens=994 accesses=119280
+
+expert bytes touched per token = 856 MB (slice = 6.68 MB); replay covers 15/16 layers (last layer pruned by llama.cpp), hit rate applied to all 16
+
+Session stream, steady state (second half), slice hit rate and implied tok/s on the lab laptop
+cap(slices)  cap(GB) |            LRU |            LFU |         oracle | oracle/LRU miss ratio
+        240     1.60 |  51.1%  0.2- 0.6 |  43.6%  0.2- 0.6 |  76.8%  0.4- 1.3 | 0.47
+        480     3.21 |  80.2%  0.5- 1.4 |  70.6%  0.3- 1.0 |  92.5%  1.2- 3.1 | 0.38
+        638     4.26 |  90.8%  1.0- 2.7 |  83.9%  0.6- 1.7 |  96.9%  2.5- 5.3 | 0.33
+        750     5.01 |  95.8%  1.9- 4.5 |  91.4%  1.0- 2.8 |  98.7%  4.4- 7.3 | 0.31
+        844     5.64 |  98.4%  3.9- 6.9 |  96.6%  2.3- 5.0 |  99.5%  6.9- 9.0 | 0.30
+
+Per-prompt, cold cache (each prompt alone), LRU hit rate, whole stream:
+  cap=240: code=61.3%  science=46.7%  narrative=46.8%  data=56.1%  spanish=49.0%
+  cap=480: code=86.2%  science=75.1%  narrative=76.1%  data=82.0%  spanish=78.5%
+  cap=638: code=93.0%  science=87.7%  narrative=89.3%  data=91.0%  spanish=88.1%
+  cap=750: code=95.4%  science=93.1%  narrative=94.3%  data=94.3%  spanish=92.9%
+  cap=844: code=96.7%  science=95.0%  narrative=95.9%  data=95.4%  spanish=95.7%

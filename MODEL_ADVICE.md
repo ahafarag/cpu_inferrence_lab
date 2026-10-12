@@ -17,6 +17,7 @@ Pattern being tested: plan / gates / research on Opus, execution / benchmarks on
 | 4 | 2026-10-12 | Next: bitnet.cpp build and run (Phase 0 task 3) | Stay on Sonnet | Same build-and-measure pattern; switch to Opus only at Gate 0 (scoring ideas 1-4) | | |
 | 5 | 2026-10-12 | Gate 0: score ideas 1-4 with `BENEFIT_GATE.md` once bitnet.cpp + PowerInfer are measured | **Switch to Opus** | Judgement over thin, conflicting evidence; this decides what the next 3-4 weeks go to. A quick feasibility read (above in IDEAS.md) was done on Sonnet and should be re-checked on Opus | | |
 | 7 | 2026-10-12 | Phase 1 step 3: routing log + cache replay, then Gate 1 verdict | Stay on Sonnet for the replay; **switch to Opus for Gate 1** | Replay is scripted measurement; the pass/stop call and what to publish is judgement | | |
+| 8 | 2026-10-12 | Gate 1: is a predictor-based prefetcher worth building, or publish the characterisation + read-ahead finding and go to Phase 1b? | **Switch to Opus** | Evidence is complete and ambiguous (oracle 3x, practical predictor unmeasured); this is the pass/stop call and decides weeks of work | | |
 | 6 | 2026-10-12 | Phase 1 kill-test: MoE in-RAM vs streamed benchmark, routing log, LRU replay | **Switch back to Sonnet** | Execution with fixed stop rules; return to Opus only at Gate 1 (did the kill-test pass?) | | |
 
 ## Switch triggers (reference)

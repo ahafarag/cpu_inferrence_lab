@@ -166,6 +166,23 @@ Disk (inside WSL, cold): sequential 285 MB/s, random 128 KB reads 86 MB/s. Exper
 
 Smaller read-ahead wins until ~128–256 KB, then flattens. Native Linux's default (128 KB) already sits in the good region, so this is a **WSL2-specific** finding. Tangible-improvement threshold (>= 2x) met: 15x with no code. 5-rep confirmation of 256 / 128 / 8192 pending. Absolute speed is still ~3.7x below in-RAM; see `benchmarks/project_streaming.py` for the projection model and its limits.
 
+**Routing replay on real text (step 3, 2026-10-12).** 5 varied prompts (code, science, narrative, SQL, Spanish; 994 tokens), expert routing logged with `benchmarks/routing/` (`llama-moe-routing` built from `moe_routing.cpp`), replayed through cache policies at expert-slice granularity (6.68 MB per (layer, expert)); output in `benchmarks/routing/replay_output.txt`. Replay covers 15 of 16 layers (llama.cpp prunes the last layer to the output token).
+
+| Cache for experts | LRU hit | LFU hit | Belady oracle hit | oracle misses / LRU misses |
+|---|---|---|---|---|
+| 3.2 GB (480 slices) | 80.2% | 70.6% | 92.5% | 0.38 |
+| **4.3 GB (638) ≈ the 5 GB lab cache** | **90.8%** | 83.9% | 96.9% | 0.33 |
+| 5.0 GB (750) | 95.8% | 91.4% | 98.7% | 0.31 |
+| 5.6 GB (844) | 98.4% | 96.6% | 99.5% | 0.30 |
+
+Findings:
+1. **The benchmark's 95–98% hit-rate assumption was optimistic for the realistic cache size.** On real text the kernel-style LRU gets ~91% at the lab's cache; implied lab speed 1.0–2.7 tok/s (measured on the benchmark workload: 2.8–3.4).
+2. **Cache size dominates.** +0.7 GB of cache moves LRU from 90.8% to 95.8%; +1.3 GB to 98.4%. Cache capacity (lower-bit experts, less resident overhead) is a bigger lever than policy.
+3. **Recency beats frequency.** LFU is worse than LRU at every size, so a static "popular experts" scheme does not help; temporal locality is what the OS cache already exploits.
+4. **Oracle upper bound: ~3x fewer misses (~2-2.6x tok/s) at the lab cache.** That is perfect future knowledge; a real next-layer predictor is bounded well below it, and prefetch can hide at most the ~0.1 s of compute per token (the run is I/O-bound). Predictor accuracy was NOT measured.
+
+**Stop rule 2 (oracle beats LRU by < 1.5x): technically NOT met (oracle ~3x fewer misses).** But the oracle is not attainable; the practical gain of a predictor is unmeasured and bounded by (4). This is the Gate 1 judgement call (Opus).
+
 **Stop rule 1 (streamed within 1.5x of in-RAM): NOT met, so the idea continues.** The free OS cache does not rescue a model larger than RAM on this SATA SSD.
 
 Open and NOT yet measured (this is what step 3 decides):

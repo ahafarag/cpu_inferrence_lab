@@ -1,0 +1,16 @@
+Write a Python function that merges overlapping intervals. Here is the draft I have so far:
+
+def merge_intervals(intervals):
+    if not intervals:
+        return []
+    intervals.sort(key=lambda x: x[0])
+    merged = [intervals[0]]
+    for start, end in intervals[1:]:
+        last_start, last_end = merged[-1]
+        if start <= last_end:
+            merged[-1] = (last_start, max(last_end, end))
+        else:
+            merged.append((start, end))
+    return merged
+
+The function works on small inputs but fails when the list contains tuples with equal start values and different end values, and it mutates the caller's list because of the in-place sort. Explain both problems, then rewrite the function so that it returns a new list, handles empty input, and has type hints. Finally add three unit tests using pytest, including a case with nested intervals such as [(1, 10), (2, 3), (4, 8)].
